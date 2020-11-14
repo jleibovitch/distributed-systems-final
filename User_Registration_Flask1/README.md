@@ -1,3 +1,5 @@
+# README_userRegistration1
+
 You may need to creat/initialize the database and table, here are the commands to do so:
 
 (sidenote: try running User.query.all() in python3 commandline and if it returns a list then i do not think u need to do below)
