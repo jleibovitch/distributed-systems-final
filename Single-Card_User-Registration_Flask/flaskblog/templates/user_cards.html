@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<!-- Cards or the first Cards in the for loop refers to the Cards table, the second cards is the data passes from the route or render temmplate -->
+{% for Cards in cards %}
+
+    <article class="media content-section">
+        <img class="rounded-circle article-img"
+             src="{{ url_for('static', filename='profile_pics/' + Cards.author.image_file) }}">
+        <div class="media-body">
+            <div class="article-metadata">
+                <a class="mr-2" href="{{ url_for('account') }}">{{ Cards.author.username }}</a>
+                <small class="text-muted"> Date Joined: {{ Cards.date_created.strftime('%x') }}</small>
+            </div>
+<!--            <h2><a class="article-title" href="{{ url_for('card', card_id=Cards.id) }}">{{ Cards.card_name }}</a></h2>-->
+            <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('update_card', card_id=Cards.id) }}">Add Funds</a>
+
+            <h4 class="article-title">{{ Cards.card_name }} Balance:</h4>
+            <h2 class="article-content">${{ Cards.funds }}</h2>
+        </div>
+    </article>
+
+{% endfor %}
+{% endblock content %}
