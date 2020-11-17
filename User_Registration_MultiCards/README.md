@@ -30,4 +30,4 @@ Cards.query.all()
 exit()
 ```
 
-To run simple run the following in the terminal where run.py is located: $   python3 run.py
+To run the program, simply run the following command in the terminal where run.py is located: $   python3 run.py
