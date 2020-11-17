@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<h1>Create Card </h1>
+
+<div class="content-section">
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">{{ legend }}</legend>
+
+            <div class="form-group">
+                {{ form.card_name.label(class="form-control-label") }}
+                {% if form.card_name.errors %}
+                    {{ form.card_name(class = "form-control form-control-lg is-invalid") }}
+                    <div class=invalid-feedback">
+                        {% for error in form.card_name.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.card_name(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.funds.label(class="form-control-label") }}
+                {% if form.funds.errors %}
+                    {{ form.funds(class = "form-control form-control-lg is-invalid") }}
+                    <div class=invalid-feedback">
+                        {% for error in form.funds.errors %}
+                        <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.funds(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+
+        </fieldset>
+        <div class="form-group">
+            {{ form.submit(class="btn btn-outline-info") }}
+        </div>
+
+    </form>
+</div>
+
+{% endblock content %}
