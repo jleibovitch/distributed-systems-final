@@ -46,10 +46,10 @@ class Server:
         db.insert(data["Payload"], location)
 
     def fetch_transactions(self, db, data, location):
-        print(json.dumps(db.return_transactions()))
+        return json.dumps(db.return_transactions())
 
     def fetch_user_transactions(self, db, data, location):
-        print(json.dumps(db.return_transactions_account(data["Payload"])))
+        return json.dumps(db.return_transactions_account(data["Payload"]))
 
     def bad_identity(self, db, data, location):
         print("Unknown connection")
