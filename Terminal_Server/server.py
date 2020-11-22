@@ -29,7 +29,9 @@ class Server:
             if data:
                 data = dict(json.loads(data.decode("UTF-8")))
                 exec = Server.server_funcs.get(data["Identity"], lambda: bad_identity)
-                exec(self, db, data, self.port)
+                result = exec(self, db, data, self.port)
+                if (result is not None):
+                    client.send(result.encode("UTF-8"))
                     
         client.close()
         db.close()
@@ -44,6 +46,7 @@ class Server:
 
     def insert_transaction(self, db, data, location):
         db.insert(data["Payload"], location)
+        return None
 
     def fetch_transactions(self, db, data, location):
         return json.dumps(db.return_transactions())
@@ -53,6 +56,7 @@ class Server:
 
     def bad_identity(self, db, data, location):
         print("Unknown connection")
+        return None
 
     server_funcs = {
         "Tap_Node": insert_transaction,
