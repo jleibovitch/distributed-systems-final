@@ -8,8 +8,8 @@ from time import sleep
 
 class Server:
 
-    rx_callback = None
     running = True
+    buffsize = 1 * 1024 # buffer up to 1kb
 
     def __init__(self, ip="0.0.0.0", port=12456):
 
@@ -17,7 +17,9 @@ class Server:
         self.socket.bind((ip, port))
         self.ip = ip
         self.port = port
-    
+        self.clients = {}
+        self.rx_callback = None
+
     def run(self):
 
         self.socket.listen()
@@ -28,36 +30,29 @@ class Server:
             thread = Thread(target=self.handle_client, args=(client,))
             thread.start()
 
-
-
     def handle_client(self, client: socket):
         
-        buffsize = 8 * 1024 # buffer up to 8kb
-
-        requester = Thread(target=self.requester, args=(client,))
-        requester.start()
-
-        while Server.running:
-            data = client.recv(buffsize)
-            if data:
-                if Server.rx_callback:
-                    data = Server.rx_callback(data.decode("utf-8"))
-                    client.send(data)
-
-
-        client.close()
-
+        print("Client connected")
+        rx = Thread(target=self.rx, args=(client,))
+        rx.start()
+        self.clients[client.getpeername()] = client
 
     def shutdown(self):
         print("Shutting down server")
         Server.running = False
-        self.socket.shutdown(SHUT_RDWR)
+        for (key, client) in self.clients.items():
+            print("Closing", key)
+            client.shutdown(SHUT_RDWR)
+            client.close()
+        
         self.socket.close()
 
 
-    def requester(self, client):
-
+    def rx(self, client):
         while Server.running:
-            sleep(60)
-            client.send(b"request")
+            data = client.recv(Server.buffsize)
+            if data:
+                if Server.rx_callback:
+                    data = self.rx_callback(data.decode("utf-8"))
+                    client.send(data)
 
