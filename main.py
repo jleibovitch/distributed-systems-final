@@ -2,20 +2,24 @@ from os import getenv
 from signal import signal, SIGINT
 
 from main_server.db import Database
-from main_server.server import Server
-import main_server.message as message
+from libs.comms.server import Server
+from libs.comms.server_manager import ServerManager
+from libs.comms.message import Message
 
 def shutdown(sig, frame):
   print('Shutting down')
 
+  # shutdown the manager
+  ServerManager.get_instance().shutdown()
+
   if db is not None:
     db.shutdown()
-    terminal_listener.shutdown()
 
-  exit(0)
+
+  # exit(0)
 
 def on_rx(data: str):
-    msg = message.load_from_json(data)
+    msg = Message.load_from_json(data)
     print(msg)
 
 if __name__ == '__main__':
@@ -26,10 +30,20 @@ if __name__ == '__main__':
   database = getenv("DB_NAME")
 
   db = Database(host, database, user, password)
-  terminal_listener = Server() # li
-  # web_listener = Server(port=12457)
-  Server.rx_callback = on_rx 
+
+  terminal_listener = Server() 
+  web_listener = Server(port=12457)
+
+  terminal_listener.rx_callback = on_rx 
+
+  server_manager = ServerManager.get_instance()
+  server_manager.add_server(terminal_listener)
+  server_manager.add_server(web_listener)
+
+  server_manager.run()
 
   signal(SIGINT, shutdown)
-  terminal_listener.run()
+
+  
+  # terminal_listener.run()
   # web_listener.run()
