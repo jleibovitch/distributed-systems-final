@@ -59,5 +59,6 @@ class Server:
             if data:
                 if self.rx_callback:
                     data = self.rx_callback(data.decode("utf-8"))
-                    client.send(data)
+                    if data is not None:
+                        client.send(data)
 
