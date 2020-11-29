@@ -24,7 +24,10 @@ class Message:
         return dumps(msg_dict)
 
     def to_str(self) -> str:
-        pass
+        return str(self)
+
+    def __str__(self):
+        return f"key: {self.key}, intent: {self.intent}, data: {self.data}"
 
     @staticmethod
     def load_from_json(json_msg) -> 'Message':

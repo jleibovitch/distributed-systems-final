@@ -16,11 +16,9 @@ def shutdown(sig, frame):
     db.shutdown()
 
 
-  # exit(0)
-
 def on_rx(data: str):
     msg = Message.load_from_json(data)
-    print(msg)
+    print(str(msg))
 
 if __name__ == '__main__':
 
