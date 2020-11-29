@@ -1,3 +1,7 @@
 log_*
 *.db
 __pycache__
+
+venv
+.idea
+.vim
