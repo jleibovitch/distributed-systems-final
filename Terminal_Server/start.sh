@@ -4,6 +4,6 @@ if [ $# -eq 0 ]
     exit 1
 fi
 
-export TERMINAL_PORT=$1
+port=$1
 
-python3 main.py
+python3 main.py $port

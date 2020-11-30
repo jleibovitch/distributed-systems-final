@@ -31,7 +31,7 @@ class Database:
         except Exception as e:
             print("Error while inserting transaction..is the db alive?")
                 
-    def return_transactions(self):
+    def return_transactions(self) -> dict:
         try:
             cursor = self.conn.execute("SELECT ID, TAP_NODE_ID, ACCT_ID, ORIG_BAL, CHARGE, TIMESTAMP, TERMINAL_ID from TRANSACTIONS")
             transaction_data = list()
@@ -48,10 +48,11 @@ class Database:
             return transaction_data
         except Exception as e:
             print("Error while connecting to transactions db..is the db alive?")
+            return None
 
-    def return_transactions_account(self, data):
+    def return_transactions_account(self, data) -> dict:
         try:
-            account_num = data["Account_Number"]
+            account_num = data
             cursor = self.conn.execute("SELECT ID, TAP_NODE_ID, ACCT_ID, ORIG_BAL, CHARGE, TIMESTAMP, TERMINAL_ID from TRANSACTIONS WHERE ACCT_ID=?", (account_num,))
             transaction_data = list()
             for row in cursor:
@@ -67,6 +68,7 @@ class Database:
             return transaction_data
         except Exception as e:
             print("Error while connecting to transactions db..is the db alive?")
+            return None
 
     def close(self):
         self.conn.close()

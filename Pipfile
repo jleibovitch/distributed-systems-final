@@ -5,6 +5,10 @@ name = "pypi"
 
 [packages]
 psycopg2 = "*"
+flask = "*"
+flask-bootstrap = "*"
+python-dotenv = "*"
+flask-wtf = "*"
 
 [dev-packages]
 
