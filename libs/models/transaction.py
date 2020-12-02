@@ -24,7 +24,7 @@ class Transaction:
       "transaction_id": self.transaction_id,
       "account_no": self.account_no,
       "location_no": self.location_no,
-      "transaction_time": self.transaction_time,
+      "transaction_time": str(self.transaction_time),
       "transaction_value": self.transaction_value
     }
 

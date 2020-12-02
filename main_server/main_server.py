@@ -38,9 +38,11 @@ def main():
   database = getenv("DB_NAME")
 
   db = Database(host, database, user, password)
-  api.insert_transactions(
-    api.get_account_transactions(10000000)
-  )
+  # api.insert_transactions(
+  #   api.get_account_transactions(10000000)
+  # )
+  user = api.get_user_account_info(10000000)
+  print(str(user))
 
   terminal_listener = Server() 
   web_listener = Server(port=12457)
