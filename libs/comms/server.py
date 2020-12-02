@@ -1,5 +1,8 @@
 """
 Server.py
+Author: Jamieson Leibovitch
+
+The purpose of this class is to provide functionality to a TCP server
 """
 
 from socket import socket, SHUT_RDWR
