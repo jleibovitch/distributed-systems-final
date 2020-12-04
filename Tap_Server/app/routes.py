@@ -1,3 +1,7 @@
+
+import sys
+[sys.path.append(i) for i in ['.', '..']]
+
 from app import app
 from flask import render_template, flash, redirect, url_for, request
 from app.form import Btn
@@ -5,8 +9,11 @@ from app.models import Transaction
 from datetime import datetime
 from random import randint
 from os import getenv
-from app.client import Client
-import json
+from libs.comms.client import Client
+from libs.comms.message import Message
+
+client = Client(port=-1) # decide on terminal port later
+client.start()
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
@@ -37,22 +44,17 @@ def shutdown():
     if shutdown_routine is None:
         raise RuntimeError('Not running werkzeug')
     shutdown_routine()
+    client.shutdown()
     return "Shutting down..."
 
 def package_data(data):
-    node_data = {}
-    node_data["Identity"] = "Tap_Node"
     values = {}
     values["Tap_Node_id"] = data[0]
     values["Account_Number"] = str(data[1])
     values["Original_Balance"] = data[2]
     values["Trip_Charge"] = data[3]
     values["Transaction_Timestamp"] = str(data[4])
-    node_data["Payload"] = values
-    return node_data
+    return values
 
 def send_transaction(data):
-    client = Client("127.0.0.1", int(getenv("TERMINAL_PORT")))
-    client.start()
-    client.send(json.dumps(data).encode("UTF-8"))
-    client.shutdown()
+    client.send(Message("Tap_Node", data, "Insert_Transaction").to_json().encode("UTF-8"))
