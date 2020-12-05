@@ -183,7 +183,7 @@ def user_cards(first_name, last_name):
     return render_template('user_cards.html', cards=cards, user=user)
 
 def start_client():
-    client = Client(port=0) # decide on main server port later
+    client = Client(port=12457) # decide on main server port later
     client_handler = Web_Handler("web", db)
     cliet.rx_callback = client_handler.store_user_transactions
     client.start()
