@@ -13,7 +13,7 @@ class Message:
         self.data = data
         self.intent = intent
 
-    def to_json(self) -> str:
+    def to_json(self) -> dict:
 
         msg_dict = {
             "key": self.key,
@@ -27,9 +27,13 @@ class Message:
         return str(self)
 
     def __str__(self):
-        return f"key: {self.key}, intent: {self.intent}, data: {self.data}"
+        return dumps(self.to_json)
 
     @staticmethod
-    def load_from_json(json_msg) -> 'Message':
+    def load_from_json_str(json_msg: str) -> 'Message':
         msg = loads(json_msg)
+        return Message.load_from_json(msg)
+
+    @staticmethod
+    def load_from_json(msg: dict) -> 'Message':
         return Message(msg.get("key"), msg.get("data"), msg.get("intent"))

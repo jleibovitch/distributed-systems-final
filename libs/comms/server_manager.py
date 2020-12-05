@@ -1,3 +1,10 @@
+"""
+server_manager.py
+Author: Jamieson Leibovitch
+
+The purpose of this class is to provide a method to set up, and manage multiple servers
+"""
+
 from threading import Thread
 from .server import Server
 
