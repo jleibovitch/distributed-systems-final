@@ -6,7 +6,6 @@ from app.tap_api import Tap_Handler
 from flask import render_template, flash, redirect, url_for, request
 from app.form import TapForm
 from libs.comms.client import Client
-from libs.models.transaction import Transaction
 from random import randint
 
 client_handler = None
@@ -16,7 +15,7 @@ client = None
 @app.route('/index', methods=['GET', 'POST'])
 def index():
     global client_handler
-    route_charge = randint(3, 10)
+    route_charge = -1 * randint(3, 10)
     route_num = int((request.base_url.split(":")[2]).split("/")[0])
     form = TapForm()
     if form.validate_on_submit():

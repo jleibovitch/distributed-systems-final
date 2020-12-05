@@ -28,7 +28,7 @@ class Web_Handler:
                 card = Cards.query.filter_by(user_id=user.id).first()
                 if card:
                     for transaction in account.transactions:
-                        card.funds -= transaction.transaction_value
+                        card.funds += transaction.transaction_value
                     db.session.commit()
                     print('User balance updated')
         
