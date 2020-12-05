@@ -12,6 +12,7 @@ from .db import Database
 from libs.comms.server import Server
 from libs.comms.server_manager import ServerManager
 from libs.comms.message import Message
+from main_handler import Main_Handler
 
 import main_server.api as api
 
@@ -44,10 +45,13 @@ def main():
   user = api.get_user_account_info(10000000)
   print(str(user))
 
+  main_handler = Main_Handler("main")
+
   terminal_listener = Server() 
   web_listener = Server(port=12457)
 
-  terminal_listener.rx_callback = on_rx 
+  terminal_listener.rx_callback = main_handler.insert_transactions
+  web_listener.rx_callback = main_handler.send_transactions
 
   server_manager = ServerManager.get_instance()
   server_manager.add_server(terminal_listener)

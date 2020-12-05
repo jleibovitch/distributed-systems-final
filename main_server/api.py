@@ -61,7 +61,7 @@ from (
 	select account_no, sum(transaction_value) as new_balance 
 	from transactions
 	join (
-	  select distinct(account_no) from test
+	  select distinct(account_no) from temp_transactions
 	) x
 	using (account_no)
 	group by account_no

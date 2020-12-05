@@ -1,3 +1,6 @@
+import sys
+[sys.path.append(i) for i in ['.', '..']]
+
 import os
 import secrets
 from PIL import Image
@@ -6,7 +9,13 @@ from flaskblog import app, db, bcrypt
 from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, CardForm
 from flaskblog.models import User, Cards
 from flask_login import login_user, current_user, logout_user, login_required
+from web_api import Web_Handler
+from random import randInt
+from Thread import sleep
+from libs.comms.client import Client
 
+
+start_client()
 
 # Web Page routes
 @app.route("/")
@@ -30,10 +39,10 @@ def register():
     # checking success of form, if successful hash the password and create user
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+        user = User(account_no=randInt(10000, 50000), first_name=form.first_name.data, last_name=form.last_name.data, phone_number=form.phone_number.data, email=form.email.data, password=hashed_password)
         db.session.add(user)
         db.session.commit()
-        user_card = Cards(card_name=(user.username + "'s Card"), funds=0, author=user)
+        user_card = Cards(card_name=(user.first_name + " " + user.last_name + "'s Card"), funds=0, author=user)
         db.session.add(user_card)
         db.session.commit()
         # Green message displayed on top if successful
@@ -102,13 +111,15 @@ def account():
             picture_file = save_picture(form.picture.data)
             current_user.image_file = picture_file
         # Updating Username and email
-        current_user.username = form.username.data
+        current_user.first_name = form.first_name.data
+        current_user.last_name = form.last_name.data
         current_user.email = form.email.data
         db.session.commit()
         flash('you account has been updated', 'success')
         return redirect(url_for('account'))
     elif request.method == 'GET':
-        form.username.data = current_user.username
+        form.first_name.data = current_user.first_name
+        form.last_name.data = current_user.last_name
         form.email.data = current_user.email
     image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
     return render_template('account.html', title='Account', image_file=image_file, form=form)
@@ -164,9 +175,24 @@ def delete_card(card_id):
     return redirect(url_for('home'))
 
 
-@app.route("/user/<string:username>")
-def user_cards(username):
+@app.route("/user/<string:first_name> + ' ' + <string:last_name>")
+def user_cards(first_name, last_name):
     cards = Cards.query.all()
-    user = User.query.filter_by(username=username).first_or_404()
+    user = User.query.filter_by(first_name=first_name, last_name=last_name).first_or_404()
     cards = Cards.query.filter_by(author=user)
     return render_template('user_cards.html', cards=cards, user=user)
+
+def start_client():
+    client = Client(port=0) # decide on main server port later
+    client_handler = Web_Handler("web", db)
+    cliet.rx_callback = client_handler.store_user_transactions
+    client.start()
+    client_proc = Thread(target=query_transactions, args=(client, client_handler,))
+    client_proc.start()
+
+def query_transactions(client: Client, api: Web_Handler):
+    Thread.sleep(120)
+    users = User.query.all()
+    for user in users:
+        data = api.package_request(user.account_no)
+        client.send(data)

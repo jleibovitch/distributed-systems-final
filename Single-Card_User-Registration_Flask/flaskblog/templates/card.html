@@ -8,7 +8,7 @@
          src="{{ url_for('static', filename='profile_pics/' + card.author.image_file) }}">
     <div class="media-body">
         <div class="article-metadata">
-            <a class="mr-2" href="{{ url_for('account') }}">{{ card.author.username }}</a>
+            <a class="mr-2" href="{{ url_for('account') }}">{{ card.author.first_name + " " + card.author.last_name }}</a>
             <small class="text-muted"> Date Joined: {{ card.date_created.strftime('%x') }}</small>
             {% if card.author == current_user %}
                 <div>

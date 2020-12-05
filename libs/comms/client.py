@@ -1,5 +1,6 @@
 from socket import socket, SHUT_RDWR, AF_INET, SOCK_STREAM
 from threading import Thread
+from queue import Queue
 
 class Client:
 
@@ -11,8 +12,7 @@ class Client:
         self.host_port = port
         self.isConnected = False
         self.rx_callback = None
-        self.readyToSend = False
-        self.data = None
+        self.msg_queue = Queue()
 
     def start(self):
         try:
@@ -39,18 +39,15 @@ class Client:
                 if self.rx_callback:
                     data = self.rx_callback(data.decode("utf-8"))
                     if data is not None:
-                       self.data = data
-                       self.readyToSend = True
+                       self.queue.put(data)
 
     def tx(self, socket: socket):
         while self.isConnected:
-            if self.readyToSend:
-                socket.send(data.encode("utf-8"))
-                self.readyToSend = False
-
+            while not self.queue.empty():
+                socket.send(queue.get().encode("utf-8"))
+                
     def send(self, data):
-        self.readyToSend = True
-        self.data = data
+        self.queue.put(data)
 
     def shutdown(self):
         print("Shutting down client..")
