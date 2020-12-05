@@ -3,10 +3,10 @@ from libs.comms.server_manager import ServerManager
 from libs.comms.client import Client
 from signal import signal, SIGINT
 from terminal_api import Terminal_Handler
-from Thread import sleep
-import sys
+from time import sleep
+#import sys
 
-port_number = 0
+#port_number = 0
 
 def shutdown(signal, frame):
     print('Shutting down terminal server...')
@@ -15,12 +15,12 @@ def shutdown(signal, frame):
 
 if __name__ == "__main__":
 
-    if (len(sys.arv) > 1):
-        port_number = int(sys.argv[1])
+    #if (len(sys.arv) > 1):
+    #    port_number = int(sys.argv[1])
 
     terminal_handler = Terminal_Handler("terminal")
 
-    tap_listener = Server(port=port_number)
+    tap_listener = Server(port=12458)
     tap_listener.rx_callback = terminal_handler.on_tap
 
     server_manager = ServerManager.get_instance()

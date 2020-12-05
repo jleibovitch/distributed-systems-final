@@ -47,7 +47,7 @@ def main():
 
   main_handler = Main_Handler("main")
 
-  terminal_listener = Server() 
+  terminal_listener = Server(port=12456) 
   web_listener = Server(port=12457)
 
   terminal_listener.rx_callback = main_handler.insert_transactions

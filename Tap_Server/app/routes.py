@@ -9,7 +9,7 @@ from libs.comms.client import Client
 from libs.models.transaction import Transaction
 
 
-client = Client(port=0) # decide on terminal port later
+client = Client(port=12458) # decide on terminal port later
 client_handler = Tap_Handler("tap")
 client.start()
 
