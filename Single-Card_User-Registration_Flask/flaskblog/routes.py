@@ -9,9 +9,9 @@ from flaskblog import app, db, bcrypt
 from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, CardForm
 from flaskblog.models import User, Cards
 from flask_login import login_user, current_user, logout_user, login_required
-from web_api import Web_Handler
+from flaskblog.web_api import Web_Handler
 from random import randInt
-from Thread import sleep
+from threading import sleep
 from libs.comms.client import Client
 
 
