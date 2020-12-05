@@ -4,7 +4,8 @@ import sys
 from flaskblog.models import db, User, Cards
 from libs.comms.message import Message
 from libs.models.node import Node
-from libs.models.transactions import Transaction, Account
+from libs.models.transaction import Transaction
+from libs.models.account import Account
 
 class Web_Handler:
 

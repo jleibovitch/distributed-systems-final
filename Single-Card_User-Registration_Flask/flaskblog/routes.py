@@ -10,12 +10,11 @@ from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, Card
 from flaskblog.models import User, Cards
 from flask_login import login_user, current_user, logout_user, login_required
 from flaskblog.web_api import Web_Handler
-from random import randInt
-from threading import sleep
+from random import randint
+from time import sleep
 from libs.comms.client import Client
 
 
-start_client()
 
 # Web Page routes
 @app.route("/")
@@ -196,3 +195,6 @@ def query_transactions(client: Client, api: Web_Handler):
     for user in users:
         data = api.package_request(user.account_no)
         client.send(data)
+
+
+start_client()
