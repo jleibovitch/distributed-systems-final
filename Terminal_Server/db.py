@@ -1,6 +1,5 @@
 from sqlite3 import connect
 from libs.models.transaction import Transaction
-from uuid import uuid1
 
 class Database:
     def __init__(self):
@@ -22,9 +21,7 @@ class Database:
             print("No data supplied, transaction dropped...")
             return
         try:
-            cursor = self.conn.execute("SELECT COUNT(transaction_id) from TRANSACTIONS")
-            index = cursor.fetchone()[0] + 1
-            values = [index, transaction["account_no"], transaction["location_no"], transaction["transaction_time"], transaction["transaction_value"]]
+            values = [transaction["transaction_id"], transaction["account_no"], transaction["location_no"], transaction["transaction_time"], transaction["transaction_value"]]
             self.conn.execute("INSERT INTO transactions(transaction_id, account_no, location_no, transaction_time, transaction_value) VALUES(?,?,?,?,?)", values)
             self.conn.commit()
             print("Transaction cached successfully")
@@ -36,7 +33,8 @@ class Database:
             cursor = self.conn.execute("SELECT transaction_id, account_no, location_no, transaction_time, transaction_value from TRANSACTIONS")
             transaction_data = list()
             for row in cursor:
-                transaction = Transaction({ "transaction_id": uuid1(row[0]), "account_no": row[1], "location_no": row[2], "transaction_time": row[3], "transaction_value": row[4] })
+                print(row)
+                transaction = Transaction({ "transaction_id": row[0], "account_no": row[1], "location_no": row[2], "transaction_time": row[3], "transaction_value": row[4] })
                 transaction_data.append(transaction)
             return transaction_data
         except Exception as e:

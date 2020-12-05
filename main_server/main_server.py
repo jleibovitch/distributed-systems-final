@@ -46,6 +46,8 @@ def main():
 
   db = Database(host, database, user, password)
 
+  print(list(map(lambda t: str(t), api.get_account_transactions(10000000))))
+
   main_handler = Main_Handler("main")
 
   terminal_listener = Server(port=12456) 

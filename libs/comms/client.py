@@ -38,7 +38,7 @@ class Client:
                 if self.rx_callback:
                     data = self.rx_callback(data.decode("utf-8"))
                     if data is not None:
-                       self.msq_queue.put(data)
+                       self.msg_queue.put(data)
 
     def tx(self, socket: socket):
         while self.isConnected:
