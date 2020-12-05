@@ -1,9 +1,13 @@
+import sys
+[sys.path.append(i) for i in ['.', '..']]
+
 from libs.comms.server import Server
 from libs.comms.server_manager import ServerManager
 from libs.comms.client import Client
 from signal import signal, SIGINT
 from terminal_api import Terminal_Handler
 from time import sleep
+from threading import Thread
 #import sys
 
 #port_number = 0
@@ -12,6 +16,10 @@ def shutdown(signal, frame):
     print('Shutting down terminal server...')
     ServerManager.get_instance().shutdown()
     exit(0)
+
+def query_transactions(client: Client, api: Terminal_Handler):
+    sleep(90)
+    client.send(api.send_all_transactions())
 
 if __name__ == "__main__":
 
@@ -30,11 +38,7 @@ if __name__ == "__main__":
 
     client = Client(port=12456)  #change port when we decide which ports to run each server at
     client.start()
-    client_proc = Thread(target=send_transactions, args=(client, terminal_handler,))
+    client_proc = Thread(target=query_transactions, args=(client, terminal_handler,))
     client_proc.start()
 
     signal(SIGINT, shutdown)
-    
-def query_transactions(client: Client, api: Terminal_Handler):
-    Thread.sleep(90)
-    client.send(api.send_all_transactions())

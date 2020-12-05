@@ -190,7 +190,7 @@ def start_client():
     client_proc.start()
 
 def query_transactions(client: Client, api: Web_Handler):
-    Thread.sleep(120)
+    sleep(120)
     users = User.query.all()
     for user in users:
         data = api.package_request(user.account_no)
