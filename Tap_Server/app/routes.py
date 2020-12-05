@@ -20,7 +20,6 @@ def index():
     route_num = int((request.base_url.split(":")[2]).split("/")[0])
     form = TapForm()
     if form.validate_on_submit():
-        current_balance = transaction.starting_balance - route_charge
         account_no = int(form.account_no.data)
         flash('Tap Successful, Trip charge: {}'.format(route_charge))
         
