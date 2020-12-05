@@ -3,7 +3,7 @@ import sys
 
 from libs.comms.message import Message
 from libs.models.node import Node
-from libs.models.transactions import Transaction
+from libs.models.transaction import Transaction
 
 class Tap_Handler:
 
