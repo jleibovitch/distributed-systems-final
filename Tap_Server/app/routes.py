@@ -7,10 +7,15 @@ from flask import render_template, flash, redirect, url_for, request
 from app.form import TapForm
 from libs.comms.client import Client
 from libs.models.transaction import Transaction
+from random import randint
+
+client_handler = None
+client = None
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 def index():
+    global client_handler
     route_charge = randint(3, 10)
     route_num = int((request.base_url.split(":")[2]).split("/")[0])
     form = TapForm()
@@ -18,7 +23,7 @@ def index():
         account_no = int(form.account_no.data)
         flash('Tap Successful, Trip charge: {}'.format(route_charge))
         
-        data = client_handler.package_request(account_no, float(route_charge))
+        data = client_handler.package_request(account_no, 12458, float(route_charge)) # terminal server port number is used for location number
         send_transaction(data)
 
         flash('Transaction sent to terminal server for caching')
@@ -36,11 +41,13 @@ def shutdown():
     return "Shutting down..."
 
 def start_client():
+    global client_handler, client
     client = Client(port=12458) # decide on terminal port later
     client_handler = Tap_Handler("tap")
     client.start()
 
 def send_transaction(data):
+    global client
     client.send(data)
 
 start_client()

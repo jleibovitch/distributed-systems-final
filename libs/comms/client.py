@@ -28,7 +28,7 @@ class Client:
         self.isConnected = True
         rx = Thread(target=self.rx, args=(socket,))
         rx.start()
-        tx = Thread(targer=self.tx, args=(socket,))
+        tx = Thread(target=self.tx, args=(socket,))
         tx.start()
 
     def rx(self, socket: socket):
@@ -43,7 +43,9 @@ class Client:
     def tx(self, socket: socket):
         while self.isConnected:
             while not self.msg_queue.empty():
-                socket.send(msg_queue.get().encode("utf-8"))
+                data = self.msg_queue.get()
+                print(data)
+                socket.send(data.encode("utf-8"))
                 
     def send(self, data):
         self.msg_queue.put(data)

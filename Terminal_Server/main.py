@@ -17,9 +17,9 @@ def shutdown(signal, frame):
     ServerManager.get_instance().shutdown()
     exit(0)
 
-def query_transactions(client: Client, api: Terminal_Handler):
-    sleep(90)
-    client.send(api.send_all_transactions())
+#def query_transactions(client: Client, api: Terminal_Handler):
+#    sleep(90)
+#    client.send(api.send_all_transactions())
 
 if __name__ == "__main__":
 
@@ -37,8 +37,10 @@ if __name__ == "__main__":
     server_manager.run()
 
     client = Client(port=12456)  #change port when we decide which ports to run each server at
+    client.rx_callback = terminal_handler.send_all_transactions
     client.start()
-    client_proc = Thread(target=query_transactions, args=(client, terminal_handler,))
-    client_proc.start()
+
+    #client_proc = Thread(target=query_transactions, args=(client, terminal_handler,))
+    #client_proc.start()
 
     signal(SIGINT, shutdown)

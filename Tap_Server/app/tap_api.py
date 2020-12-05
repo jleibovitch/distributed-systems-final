@@ -4,6 +4,7 @@ import sys
 from libs.comms.message import Message
 from libs.models.node import Node
 from libs.models.transaction import Transaction
+from datetime import datetime
 
 class Tap_Handler:
 
@@ -14,8 +15,8 @@ class Tap_Handler:
         self.data = None
         self.transaction = None
 
-    def package_request(self, acct_no: int, route_charge: float) -> 'Message':
-        transaction = Transaction(account_no=acct_no, location_no=terminal_location, transaction_time=datetime.utcnow(), transaction_value=route_charge)
+    def package_request(self, acct_no: int, terminal_location: int, route_charge: float) -> str:
+        transaction = Transaction({ "account_no": acct_no, "location_no": terminal_location, "transaction_time": datetime.utcnow(), "transaction_value": route_charge })
         message = Message(self.node.type, transaction.to_json(), "push")
-        return message
+        return str(message.to_str())
         

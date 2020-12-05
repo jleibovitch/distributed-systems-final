@@ -5,7 +5,7 @@ Author: Jamieson Leibovitch
 The purpose of this class is to provide functionality to a TCP server
 """
 
-from socket import socket, SHUT_RDWR
+from socket import socket, SHUT_RDWR, SOL_SOCKET, SO_REUSEADDR
 from threading import Thread
 from time import sleep
 
@@ -16,6 +16,7 @@ class Server:
     def __init__(self, ip="0.0.0.0", port=12456):
 
         self.socket = socket()
+        self.socket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
         self.socket.bind((ip, port))
         self.ip = ip
         self.port = port

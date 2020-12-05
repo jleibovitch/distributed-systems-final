@@ -17,7 +17,7 @@ class Database:
             print("Error while connecting to transactions db")
 
     def insert(self, transaction):
-        if data is None:
+        if transaction is None:
             print("No data supplied, transaction dropped...")
             return
         try:
@@ -28,7 +28,7 @@ class Database:
             self.conn.commit()
             print("Transaction cached successfully")
         except Exception as e:
-            print("Error while inserting transaction..is the db alive?")
+            print(e)
                 
     def return_transactions(self) -> list:
         try:
@@ -39,7 +39,7 @@ class Database:
                 transaction_data.append(values)
             return transaction_data
         except Exception as e:
-            print("Error while connecting to transactions db..is the db alive?")
+            print(e)
             return None
 
     def close(self):
