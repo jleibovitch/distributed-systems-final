@@ -6,7 +6,7 @@ class Client:
 
     buffsize = 1 * 1024 # buffer up to 1kb
 
-    def __init__(self, host_addr = "127.0.0.1", host_port = 0):
+    def __init__(self, host_addr = "127.0.0.1", port = 0):
         self.socket = socket(AF_INET,SOCK_STREAM)
         self.host_addr = host_addr
         self.host_port = port
@@ -22,7 +22,6 @@ class Client:
             rx_thread.start()
         except Exception as e:
             print("Could not connect to the server.")
-            exit(1)
 
     def server_connect(self, socket: socket):
         print("Connected to server")

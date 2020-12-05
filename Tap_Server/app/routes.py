@@ -8,11 +8,6 @@ from app.form import TapForm
 from libs.comms.client import Client
 from libs.models.transaction import Transaction
 
-
-client = Client(port=12458) # decide on terminal port later
-client_handler = Tap_Handler("tap")
-client.start()
-
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 def index():
@@ -40,5 +35,12 @@ def shutdown():
     client.shutdown()
     return "Shutting down..."
 
+def start_client():
+    client = Client(port=12458) # decide on terminal port later
+    client_handler = Tap_Handler("tap")
+    client.start()
+
 def send_transaction(data):
     client.send(data)
+
+start_client()
