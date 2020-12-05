@@ -1,6 +1,6 @@
-from libs.comm.server import Server
-from libs.comm.server_manager import ServerManager
-from libs.comm.client import Client
+from libs.comms.server import Server
+from libs.comms.server_manager import ServerManager
+from libs.comms.client import Client
 from signal import signal, SIGINT
 from terminal_api import Terminal_Handler
 from Thread import sleep
@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
     server_manager.run()
 
-    client = Client(port=0)  #change port when we decide which ports to run each server at
+    client = Client(port=12456)  #change port when we decide which ports to run each server at
     client.start()
     client_proc = Thread(target=send_transactions, args=(client, terminal_handler,))
     client_proc.start()

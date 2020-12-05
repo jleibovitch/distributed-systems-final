@@ -39,15 +39,15 @@ class Client:
                 if self.rx_callback:
                     data = self.rx_callback(data.decode("utf-8"))
                     if data is not None:
-                       self.queue.put(data)
+                       self.msq_queue.put(data)
 
     def tx(self, socket: socket):
         while self.isConnected:
-            while not self.queue.empty():
-                socket.send(queue.get().encode("utf-8"))
+            while not self.msg_queue.empty():
+                socket.send(msg_queue.get().encode("utf-8"))
                 
     def send(self, data):
-        self.queue.put(data)
+        self.msg_queue.put(data)
 
     def shutdown(self):
         print("Shutting down client..")

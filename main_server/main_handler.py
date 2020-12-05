@@ -1,4 +1,4 @@
-from libs.comm.message import Message
+from libs.comms.message import Message
 from libs.models.node import Node
 import main_server.api as api
 

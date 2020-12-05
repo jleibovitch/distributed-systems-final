@@ -1,7 +1,7 @@
 import sys
 [sys.path.append(i) for i in ['.', '..']]
 
-from libs.comm.message import Message
+from libs.comms.message import Message
 from libs.models.node import Node
 from libs.models.transactions import Transaction
 
