@@ -1,72 +1,47 @@
 from sqlite3 import connect
+from libs.models.transaction import Transaction
+from uuid import uuid1
 
 class Database:
-    DATA_LENGTH = 5
     def __init__(self):
         try:
             self.conn = connect('transactions.db')
             self.conn.execute('''CREATE TABLE IF NOT EXISTS transactions (
-                ID INTEGER PRIMARY KEY AUTOINCREMENT,
-                TAP_NODE_ID INTEGER NOT NULL,
-                ACCT_ID VARCHAR(36) NOT NULL,
-                ORIG_BAL REAL NOT NULL,
-                CHARGE REAL NOT NULL,
-                TIMESTAMP VARCHAR(64) NOT NULL,
-                TERMINAL_ID INTEGER NOT NULL
+                transaction_id VARCHAR(255) PRIMARY KEY NOT NULL,
+                account_no INTEGER NOT NULL,
+                location_no INTEGER NOT NULL,
+                transaction_time VARCHAR(64) NOT NULL,
+                transaction_value REAL NOT NULL
             )''')
+
         except Exception as e:
             print("Error while connecting to transactions db")
 
-    def insert(self, data, terminal_id):
-        if (data is None or len(data) != Database.DATA_LENGTH):
-            print("Invalid data, transaction dropped...")
+    def insert(self, transaction):
+        if transaction is None:
+            print("No data supplied, transaction dropped...")
             return
         try:
-            cursor = self.conn.execute("SELECT COUNT(ID) from TRANSACTIONS")
+            cursor = self.conn.execute("SELECT COUNT(transaction_id) from TRANSACTIONS")
             index = cursor.fetchone()[0] + 1
-            values = [index, data["Tap_Node_id"], data["Account_Number"], data["Original_Balance"], data["Trip_Charge"], data["Transaction_Timestamp"], terminal_id]
-            self.conn.execute("INSERT INTO transactions(ID, TAP_NODE_ID, ACCT_ID, ORIG_BAL, CHARGE, TIMESTAMP, TERMINAL_ID) VALUES(?,?,?,?,?,?,?)", values)
+            values = [index, transaction["account_no"], transaction["location_no"], transaction["transaction_time"], transaction["transaction_value"]]
+            self.conn.execute("INSERT INTO transactions(transaction_id, account_no, location_no, transaction_time, transaction_value) VALUES(?,?,?,?,?)", values)
             self.conn.commit()
             print("Transaction cached successfully")
         except Exception as e:
-            print("Error while inserting transaction..is the db alive?")
+            print(e)
                 
-    def return_transactions(self):
+    def return_transactions(self) -> list:
         try:
-            cursor = self.conn.execute("SELECT ID, TAP_NODE_ID, ACCT_ID, ORIG_BAL, CHARGE, TIMESTAMP, TERMINAL_ID from TRANSACTIONS")
+            cursor = self.conn.execute("SELECT transaction_id, account_no, location_no, transaction_time, transaction_value from TRANSACTIONS")
             transaction_data = list()
             for row in cursor:
-                values = {}
-                values["Transaction_id"] = row[0]
-                values["Tap_Node_id"] = row[1]
-                values["Account_Number"] = row[2]
-                values["Original_Balance"] = row[3]
-                values["Trip_Charge"] = row[4]
-                values["Transaction_Timestamp"] = row[5]
-                values["Location_id"] = row[6]
-                transaction_data.append(values)
+                transaction = Transaction({ "transaction_id": uuid1(row[0]), "account_no": row[1], "location_no": row[2], "transaction_time": row[3], "transaction_value": row[4] })
+                transaction_data.append(transaction)
             return transaction_data
         except Exception as e:
-            print("Error while connecting to transactions db..is the db alive?")
-
-    def return_transactions_account(self, data):
-        try:
-            account_num = data["Account_Number"]
-            cursor = self.conn.execute("SELECT ID, TAP_NODE_ID, ACCT_ID, ORIG_BAL, CHARGE, TIMESTAMP, TERMINAL_ID from TRANSACTIONS WHERE ACCT_ID=?", (account_num,))
-            transaction_data = list()
-            for row in cursor:
-                values = {}
-                values["Transaction_id"] = row[0]
-                values["Tap_Node_id"] = row[1]
-                values["Account_Number"] = row[2]
-                values["Original_Balance"] = row[3]
-                values["Trip_Charge"] = row[4]
-                values["Transaction_Timestamp"] = row[5]
-                values["Location_id"] = row[6]
-                transaction_data.append(values)
-            return transaction_data
-        except Exception as e:
-            print("Error while connecting to transactions db..is the db alive?")
+            print(e)
+            return None
 
     def close(self):
         self.conn.close()

@@ -11,7 +11,22 @@
                 <h2>Welcome to transit route # {{ route_num }}</h2>
                 <form action="" method="post" novalidate>
                     {{ form.hidden_tag() }}
-                    <p>{{ form.tap() }}</p>
+                    <div class="form-group">
+                        {{ form.account_no.label(class="form-control-label") }}
+                        {% if form.account_no.errors %}
+                            {{ form.account_no(class = "form-control form-control-lg is-invalid") }}
+                            <div class=invalid-feedback">
+                                {% for error in form.account_no.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.account_no(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        {{ form.tap_btn() }}
+                    </div>
                 </form>
             </div>  
         </div>  

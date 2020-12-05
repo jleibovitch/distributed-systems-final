@@ -20,14 +20,14 @@ class Message:
             "intent": self.intent,
             "data": self.data
         }
-
-        return dumps(msg_dict)
+        
+        return msg_dict
 
     def to_str(self) -> str:
         return str(self)
 
     def __str__(self):
-        return dumps(self.to_json)
+        return dumps(self.to_json())
 
     @staticmethod
     def load_from_json_str(json_msg: str) -> 'Message':

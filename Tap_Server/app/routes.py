@@ -1,32 +1,31 @@
+import sys
+[sys.path.append(i) for i in ['.', '..']]
+
 from app import app
+from app.tap_api import Tap_Handler
 from flask import render_template, flash, redirect, url_for, request
-from app.form import Btn
-from app.models import Transaction
-from datetime import datetime
+from app.form import TapForm
+from libs.comms.client import Client
 from random import randint
-from os import getenv
-from app.client import Client
-import json
+
+client_handler = None
+client = None
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 def index():
-    route_charge = randint(3, 10)
+    global client_handler
+    route_charge = -1 * randint(3, 10)
     route_num = int((request.base_url.split(":")[2]).split("/")[0])
-    form = Btn()
-    transaction = Transaction()
+    form = TapForm()
     if form.validate_on_submit():
-        current_balance = transaction.starting_balance - route_charge
+        account_no = int(form.account_no.data)
+        flash('Tap Successful, Trip charge: {}'.format(route_charge))
         
-        flash('Account Number: {}'.format(transaction.account_num))
-        flash('Customer starting balance: {}'.format(transaction.starting_balance))
-        flash('Customer current balance: {}'.format(current_balance))
-        flash('Transaction sent to terminal server for caching')
-
-        data = [route_num, transaction.account_num, transaction.starting_balance, route_charge, datetime.utcnow()]
-        data = package_data(data)
+        data = client_handler.package_request(account_no, 12458, float(route_charge)) # terminal server port number is used for location number
         send_transaction(data)
 
+        flash('Transaction sent to terminal server for caching')
         return redirect(url_for('index'))
 
     return render_template('index.html', route_num=route_num, form=form)
@@ -37,22 +36,17 @@ def shutdown():
     if shutdown_routine is None:
         raise RuntimeError('Not running werkzeug')
     shutdown_routine()
+    client.shutdown()
     return "Shutting down..."
 
-def package_data(data):
-    node_data = {}
-    node_data["Identity"] = "Tap_Node"
-    values = {}
-    values["Tap_Node_id"] = data[0]
-    values["Account_Number"] = str(data[1])
-    values["Original_Balance"] = data[2]
-    values["Trip_Charge"] = data[3]
-    values["Transaction_Timestamp"] = str(data[4])
-    node_data["Payload"] = values
-    return node_data
+def start_client():
+    global client_handler, client
+    client = Client(port=12458) # decide on terminal port later
+    client_handler = Tap_Handler("tap")
+    client.start()
 
 def send_transaction(data):
-    client = Client("127.0.0.1", int(getenv("TERMINAL_PORT")))
-    client.start()
-    client.send(json.dumps(data).encode("UTF-8"))
-    client.shutdown()
+    global client
+    client.send(data)
+
+start_client()
