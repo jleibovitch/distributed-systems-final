@@ -12,7 +12,7 @@ class Main_Handler:
     def insert_transactions(self, data):
         print(data)
         data = Message.load_from_json_str(data)
-        if (data.key == "terminal" and data.intent == "push") or (data.key == "web" and data.intent == "push_transactions"):
+        if (data.key == "terminal" and data.intent == "push"):
             api.insert_transactions(list(map(lambda t: Transaction(t), data.data)))
 
     def handle_incoming_web_request(self, data):
@@ -28,6 +28,10 @@ class Main_Handler:
                 api.register_user_account(msg.data["account_no"])
             elif msg.intent == "pull_transactions":
                 return_data = self.send_transactions(msg.data)
+            elif msg.intent == "push_transactions":
+                print("Web Transaction", msg)
+                api.insert_transactions(list(map(lambda t: Transaction(t), msg.data)))
+
 
         return return_data
 
