@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<!-- Cards or the first Cards in the for loop refers to the Cards table, the second cards is the data passes from the route or render temmplate -->
+<!-- Cards or the first Cards in the for loop refers to the Cards table, the second cards is the data passed from the route or render temmplate -->
 {% for Cards in cards %}
 
     <article class="media content-section">
@@ -20,5 +20,12 @@
         </div>
     </article>
 
+
 {% endfor %}
+
+{% for Transactions in transactions %}
+<p>{{ Transactions.transaction_value }}</p>
+
+{% endfor %}
+
 {% endblock content %}
