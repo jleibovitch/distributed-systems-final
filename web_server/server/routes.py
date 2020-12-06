@@ -16,6 +16,9 @@ from libs.comms.client import Client
 
 from threading import Thread
 
+api: Web_Handler = Web_Handler("web", db)
+client: Client = Client(port=12457)
+
 # Web Page routes
 @app.route("/")
 @app.route("/home")
@@ -41,7 +44,12 @@ def register():
     # checking success of form, if successful hash the password and create user
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(account_no=randint(10000, 50000), first_name=form.first_name.data, last_name=form.last_name.data, phone_number=form.phone_number.data, email=form.email.data, password=hashed_password)
+        
+        # geneate a random id
+        account_no = randint(10000, 500000)
+        client.send(api.push_account(account_no))
+
+        user = User(account_no=account_no, first_name=form.first_name.data, last_name=form.last_name.data, phone_number=form.phone_number.data, email=form.email.data, password=hashed_password)
         db.session.add(user)
         db.session.commit()
         user_card = Cards(card_name=(user.first_name + " " + user.last_name + "'s Card"), funds=0, author=user)
@@ -67,7 +75,6 @@ def login():
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
             # this line redirects them to the page they were previously if they were not logged, takes info from url
-            print(request.args)
             next_page = request.args.get('next')
             # default redirection is home
             return redirect(next_page) if next_page else redirect(url_for('home'))
@@ -160,9 +167,7 @@ def update_card(card_id):
         db.session.commit()
         flash('Your funds has been updated', 'success')
         return redirect(url_for('card', card_id=card.id))
-    # elif request.method == 'GET':
-        # form.card_name.data = card.card_name
-        # form.funds.data = card.funds
+
     return render_template('create_card.html', title='Update Card', form=form, legend='Please enter the amount of funds to add')
 
 
@@ -186,18 +191,18 @@ def user_cards(first_name, last_name):
     return render_template('user_cards.html', cards=cards, user=user)
 
 def start_client():
-    client = Client(port=12457)
-    client_handler = Web_Handler("web", db)
-    client.rx_callback = client_handler.store_user_transactions
+    client.rx_callback = api.handle_incoming
     client.start()
-    client_proc = Thread(target=query_transactions, args=(client, client_handler,))
+    client_proc = Thread(target=query_transactions, args=(client, api,))
+    client_proc.daemon = True 
     client_proc.start()
 
 def query_transactions(client: Client, api: Web_Handler):
-    sleep(10)
-    users = User.query.all()
-    print("getting user transactions")
-    for user in users:
-        data = api.package_request(user.account_no)
-        client.send(data)
+    while True:
+        sleep(10)
+        users = User.query.all()
+        print("getting user transactions")
+        for user in users:
+            data = api.request_transactions(user.account_no)
+            client.send(data)
 

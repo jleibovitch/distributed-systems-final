@@ -112,13 +112,13 @@ def get_user_account_info(account_id: int) -> Account:
 
   return Account(rows[0], transactions, cards)
 
-def register_user_account(account: Account):
+def register_user_account(account_no: int):
     """
     Insert into the database a new account
     """
 
-    query = "insert into account values (%s, %s, %s, %s, %s, %s)"
-    values = (account.account_no, account.first_name, account.last_name, account.phone_number, account.email, account.balance)
+    query = "insert into account values (%s, %s) "#%s, %s, %s, %s)"
+    values = (account_no, 0)
 
     db = Database.get_instance()
     count = db.modify(query, values)

@@ -56,7 +56,7 @@ def main():
   terminal_listener.rx_callback = main_handler.insert_transactions
   terminal_listener.on_connected_callback = request_terminal
 
-  web_listener.rx_callback = main_handler.send_transactions
+  web_listener.rx_callback = main_handler.handle_incoming_web_request
 
   server_manager = ServerManager.get_instance()
   server_manager.add_server(terminal_listener)
@@ -66,7 +66,7 @@ def main():
       
       while terminal_listener.running:
           sleep(10)
-          print("Requesting terminl data")
+          print("Requesting terminal data")
           for client in terminal_listener.clients.values():
               request_terminal(client)
               sleep(1) # allow 1 second between messages
@@ -74,6 +74,17 @@ def main():
   rr = Thread(target=round_robin)
   rr.daemon = True
   rr.start()
+
+  def web_fetch():
+      while web_listener.running:
+          sleep(10)
+          print("Requesting web server transactios")
+          for client in web_listener.clients.values():
+              client.send(str(Message("main", {}, "pull_transactions")).encode('utf-8'))
+
+  web_rr = Thread(target=web_fetch)
+  web_rr.daemon= True
+  web_rr.start()
 
   server_manager.run()
 
