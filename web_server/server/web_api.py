@@ -49,8 +49,11 @@ class Web_Handler:
             if user:
                 card = Cards.query.filter_by(user_id=user.id).first()
                 if card:
+                    funds = 0
                     for transaction in transactions:
-                        card.funds += transaction.transaction_value
+                        funds += transaction.transaction_value
+
+                    card.funds = funds
                     db.session.commit()
                     print('User balance updated')
         

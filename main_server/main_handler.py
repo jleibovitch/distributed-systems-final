@@ -34,6 +34,6 @@ class Main_Handler:
 
     def send_transactions(self, data) -> str:
         acct_no = data["account_no"]
-        transactions = list(map(lambda t: t.to_json(), api.get_account_transactions(acct_no)))
+        transactions = api.get_account_transactions(acct_no)
         msg = Message(self.node.type, Account({"account_no": acct_no}, transactions=transactions).to_json(), "push_transactions")
         return str(msg).encode('utf-8')
