@@ -1,7 +1,7 @@
 import sys
 [sys.path.append(i) for i in ['.', '..']]
 
-from flaskblog.models import db, User, Cards
+from .models import db, User, Cards
 from libs.comms.message import Message
 from libs.models.node import Node
 from libs.models.transaction import Transaction

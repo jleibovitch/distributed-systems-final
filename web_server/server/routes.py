@@ -5,15 +5,16 @@ import os
 import secrets
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort
-from flaskblog import app, db, bcrypt
-from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, CardForm
-from flaskblog.models import User, Cards
+from . import app, db, bcrypt
+from .forms import RegistrationForm, LoginForm, UpdateAccountForm, CardForm
+from .models import User, Cards
 from flask_login import login_user, current_user, logout_user, login_required
-from flaskblog.web_api import Web_Handler
+from .web_api import Web_Handler
 from random import randint
 from time import sleep
 from libs.comms.client import Client
 
+from threading import Thread
 
 
 # Web Page routes
@@ -38,7 +39,7 @@ def register():
     # checking success of form, if successful hash the password and create user
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(account_no=randInt(10000, 50000), first_name=form.first_name.data, last_name=form.last_name.data, phone_number=form.phone_number.data, email=form.email.data, password=hashed_password)
+        user = User(account_no=randint(10000, 50000), first_name=form.first_name.data, last_name=form.last_name.data, phone_number=form.phone_number.data, email=form.email.data, password=hashed_password)
         db.session.add(user)
         db.session.commit()
         user_card = Cards(card_name=(user.first_name + " " + user.last_name + "'s Card"), funds=0, author=user)
@@ -182,9 +183,9 @@ def user_cards(first_name, last_name):
     return render_template('user_cards.html', cards=cards, user=user)
 
 def start_client():
-    client = Client(port=12457) # decide on main server port later
+    client = Client(port=12457)
     client_handler = Web_Handler("web", db)
-    cliet.rx_callback = client_handler.store_user_transactions
+    client.rx_callback = client_handler.store_user_transactions
     client.start()
     client_proc = Thread(target=query_transactions, args=(client, client_handler,))
     client_proc.start()
