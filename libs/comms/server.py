@@ -22,6 +22,7 @@ class Server:
         self.port = port
         self.clients = {}
         self.rx_callback = None
+        self.on_connected_callback = None
         # self.rx_thread: Thread = None
         self.running = True
 
@@ -44,6 +45,9 @@ class Server:
         rx = Thread(target=self.rx, args=(client,))
         rx.start()
         self.clients[client.getpeername()] = client
+
+        if self.on_connected_callback is not None:
+            self.on_connected_callback(client)
 
     def shutdown(self):
         self.running = False

@@ -43,11 +43,15 @@ def insert_transactions(transactions: List[Transaction]):
 
   values = [t for v in transaction_values for t in v]
 
-  temp_transactions = "create temp table temp_transactions as with t (transaction_id, account_no, location_no, transaction_time, transaction_value) as (values "
+  temp_table = "create temp table temp_transactions(transaction_id uuid, account_no int, location_no int, transaction_time timestamp, transaction_value float)"
+  # temp_transactions = "create temp table temp_transactions as with t (transaction_id, account_no, location_no, transaction_time, transaction_value) as (values "
+  temp_transactions = "insert into temp_transactions values "
   temp_transactions += ",".join(transaction_query_strs)
-  temp_transactions += ") select * from t"
+  # temp_transactions += ")"
 
   db = Database.get_instance()
+  db.modify("drop table if exists temp_transactions")
+  db.modify(temp_table, args=values, commit=False) 
   db.modify(temp_transactions, args=values, commit=False) 
   count = db.modify("insert into transactions (select * from temp_transactions) on conflict do nothing")
 
