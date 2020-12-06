@@ -6,6 +6,7 @@ from libs.comms.message import Message
 from libs.models.node import Node
 from libs.models.transaction import Transaction
 from libs.models.account import Account
+from .models import Transactions
 
 from typing import List
 
@@ -41,7 +42,22 @@ class Web_Handler:
                     self.store_user_transactions(list(map(lambda t: Transaction(t), data.data["transactions"])))
             elif data.intent == "pull_transactions":
                 # TODO: get all cached transactions
-                return str(Message("web", [], "push_transactions"))
+
+                transactions = Transactions.query.all()
+                transactions_list = list()
+
+                for t in transactions:
+                    msg_Addfunds = {
+                                  "transaction_id": t.transaction_id,
+                                  "account_no": t.account_no,
+                                  "location_no": t.location_no,
+                                  "transaction_time": str(t.transaction_time),
+                                  "transaction_value": t.transaction_value
+                                }
+
+                    transactions_list.append(msg_Addfunds)
+
+                return str(Message("web", transactions_list, "push_transactions"))
 
     def store_user_transactions(self, transactions: List[Transaction]):
 

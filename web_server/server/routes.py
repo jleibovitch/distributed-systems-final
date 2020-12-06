@@ -199,8 +199,9 @@ def user_cards(first_name, last_name):
     cards = Cards.query.all()
     user = User.query.filter_by(first_name=first_name, last_name=last_name).first_or_404()
     cards = Cards.query.filter_by(author=user)
-    transactions = Transactions.query.filter_by(account_no=current_user.account_no)
-    return render_template('user_cards.html', cards=cards, user=user, transactions=transactions)
+    # transactions = Transactions.query.filter_by(account_no=current_user.account_no)
+    # transactions = transactions
+    return render_template('user_cards.html', cards=cards, user=user )
 
 
 def start_client():
