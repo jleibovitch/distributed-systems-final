@@ -5,14 +5,21 @@ name = "pypi"
 
 [packages]
 psycopg2 = "*"
-flask = "*"
-flask-wtf = "*"
 python-dotenv = "*"
-flask-bootstrap = "*"
+bcrypt = "*"
+email-validator = "*"
+Flask = "*"
+Flask-WTF = "*"
+Flask-Bootstrap = "*"
+Flask-Bcrypt = "*"
+Flask-Login = "*"
+Flask-SQLAlchemy = "*"
+SQLAlchemy = "*"
+WTForms = "*"
+Pillow = "*"
 
 [dev-packages]
 pylint = "*"
-
 
 [requires]
 python_version = "3.8"

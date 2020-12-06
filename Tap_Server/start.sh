@@ -23,4 +23,4 @@
 #    tap_port=$((tap_port+1))
 #done
 
-python3 run.py
+python3 run.py $1

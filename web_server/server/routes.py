@@ -1,19 +1,24 @@
 import sys
+
 [sys.path.append(i) for i in ['.', '..']]
 
 import os
 import secrets
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort
-from flaskblog import app, db, bcrypt
-from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, CardForm
-from flaskblog.models import User, Cards
+from . import app, db, bcrypt
+from .forms import RegistrationForm, LoginForm, UpdateAccountForm, CardForm
+from .models import User, Cards, Transactions
 from flask_login import login_user, current_user, logout_user, login_required
-from flaskblog.web_api import Web_Handler
+from .web_api import Web_Handler
 from random import randint
 from time import sleep
 from libs.comms.client import Client
+from uuid import uuid1
+from threading import Thread
 
+api: Web_Handler = Web_Handler("web", db)
+client: Client = Client(port=12457)
 
 
 # Web Page routes
@@ -35,14 +40,25 @@ def register():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
     form = RegistrationForm()
+    print(form.validate_on_submit())
+    print(form.errors)
     # checking success of form, if successful hash the password and create user
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(account_no=randInt(10000, 50000), first_name=form.first_name.data, last_name=form.last_name.data, phone_number=form.phone_number.data, email=form.email.data, password=hashed_password)
+
+        # geneate a random id
+        account_no = randint(10000, 500000)
+        client.send(api.push_account(account_no))
+
+        user = User(account_no=account_no, first_name=form.first_name.data, last_name=form.last_name.data, phone_number=form.phone_number.data, email=form.email.data, password=hashed_password)
+
         db.session.add(user)
         db.session.commit()
         user_card = Cards(card_name=(user.first_name + " " + user.last_name + "'s Card"), funds=0, author=user)
         db.session.add(user_card)
+        db.session.commit()
+        # initial_transaction = Transactions(transaction_id=uuid1(), transaction_value=0, account_no=user.account_no)
+        # db.session.add(initial_transaction)
         db.session.commit()
         # Green message displayed on top if successful
         flash(f'Account created, now you can log in', 'success')
@@ -154,11 +170,15 @@ def update_card(card_id):
         # card.card_name = form.card_name.data
         card.funds = card.funds + form.funds.data
         db.session.commit()
+
+        add_transaction = Transactions(transaction_id=str(uuid1()), transaction_value=form.funds.data, account_no=current_user.account_no)
+        db.session.add(add_transaction)
+        db.session.commit()
+
+
         flash('Your funds has been updated', 'success')
         return redirect(url_for('card', card_id=card.id))
-    # elif request.method == 'GET':
-        # form.card_name.data = card.card_name
-        # form.funds.data = card.funds
+
     return render_template('create_card.html', title='Update Card', form=form, legend='Please enter the amount of funds to add')
 
 
@@ -179,22 +199,24 @@ def user_cards(first_name, last_name):
     cards = Cards.query.all()
     user = User.query.filter_by(first_name=first_name, last_name=last_name).first_or_404()
     cards = Cards.query.filter_by(author=user)
-    return render_template('user_cards.html', cards=cards, user=user)
+    # transactions = Transactions.query.filter_by(account_no=current_user.account_no)
+    # transactions = transactions
+    return render_template('user_cards.html', cards=cards, user=user )
+
 
 def start_client():
-    client = Client(port=12457) # decide on main server port later
-    client_handler = Web_Handler("web", db)
-    cliet.rx_callback = client_handler.store_user_transactions
+    client.rx_callback = api.handle_incoming
     client.start()
-    client_proc = Thread(target=query_transactions, args=(client, client_handler,))
+    client_proc = Thread(target=query_transactions, args=(client, api,))
+    client_proc.daemon = True 
     client_proc.start()
 
+
 def query_transactions(client: Client, api: Web_Handler):
-    sleep(120)
-    users = User.query.all()
-    for user in users:
-        data = api.package_request(user.account_no)
-        client.send(data)
-
-
-start_client()
+    while True:
+        sleep(10)
+        users = User.query.all()
+        print("getting user transactions")
+        for user in users:
+            data = api.request_transactions(user.account_no)
+            client.send(data)
