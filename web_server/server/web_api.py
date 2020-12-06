@@ -1,7 +1,7 @@
 import sys
 [sys.path.append(i) for i in ['.', '..']]
 
-from .models import db, User, Cards
+from server.models import db, User, Cards
 from libs.comms.message import Message
 from libs.models.node import Node
 from libs.models.transaction import Transaction
@@ -13,16 +13,16 @@ class Web_Handler:
         self.node = Node(node_type)
         self.db = db
 
-    def package_request(self, acct_no: int) -> 'Message':
+    def package_request(self, acct_no: int) -> str:
         data = {}
         data["account_no"] = acct_no
         message = Message(self.node.type, data, "pull")
-        return message
+        return str(message)
 
     def store_user_transactions(self, data):
         data = Message.load_from_json(data)
-        if data["key"] == "main" and data["intent"] == "push":
-            account = Account(data["data"]["account"], data["data"]["transactions"])
+        if data.key == "main" and data.intent == "push":
+            account = Account(data.data["account_no"], data.data["transactions"])
             user = User.query.filter_by(account_no=data).first()
             if user:
                 card = Cards.query.filter_by(user_id=user.id).first()

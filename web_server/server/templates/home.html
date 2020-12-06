@@ -14,7 +14,7 @@
              src="{{ url_for('static', filename='profile_pics/' + Cards.author.image_file) }}">
         <div class="media-body">
             <div class="article-metadata">
-                <a class="mr-2" href="{{ url_for('user_cards', username=Cards.author.username) }}">{{ Cards.author.username }}</a>
+                <a class="mr-2" href="{{ url_for('user_cards', first_name=Cards.author.first_name, last_name=Cards.author.last_name) }}">{{ Cards.author.first_name }}</a>
                 <small class="text-muted">{{ Cards.date_created.strftime('%x %I:%M') }}</small>
             </div>
             <h2><a class="article-title" href="{{ url_for('card', card_id=Cards.id) }}">{{ Cards.card_name }}</a></h2>

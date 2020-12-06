@@ -16,7 +16,6 @@ from libs.comms.client import Client
 
 from threading import Thread
 
-
 # Web Page routes
 @app.route("/")
 @app.route("/home")
@@ -32,10 +31,13 @@ def about():
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
+    print('test')
     # if the are logged in they cant register so they are sent back to home (they wont even see the register button anyways)
     if current_user.is_authenticated:
         return redirect(url_for('home'))
     form = RegistrationForm()
+    print(form.validate_on_submit())
+    print(form.errors)
     # checking success of form, if successful hash the password and create user
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
@@ -65,6 +67,7 @@ def login():
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
             # this line redirects them to the page they were previously if they were not logged, takes info from url
+            print(request.args)
             next_page = request.args.get('next')
             # default redirection is home
             return redirect(next_page) if next_page else redirect(url_for('home'))
@@ -191,11 +194,10 @@ def start_client():
     client_proc.start()
 
 def query_transactions(client: Client, api: Web_Handler):
-    sleep(120)
+    sleep(10)
     users = User.query.all()
+    print("getting user transactions")
     for user in users:
         data = api.package_request(user.account_no)
         client.send(data)
 
-
-start_client()
