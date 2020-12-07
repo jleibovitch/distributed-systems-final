@@ -1,3 +1,10 @@
+"""
+main.py
+Author: Darren Chan
+
+Main entry point for the terminal server. Creates the terminal server and main server client and assigns callbacks
+"""
+
 import sys
 [sys.path.append(i) for i in ['.', '..']]
 
@@ -23,12 +30,16 @@ def shutdown(signal, frame):
 
 if __name__ == "__main__":
 
-    #if (len(sys.arv) > 1):
-    #    port_number = int(sys.argv[1])
+    port_number = 12458
+    server_number = 12456
+    if len(sys.argv) > 1:
+        port_number = int(sys.argv[1]) 
+    if len(sys.argv) > 2:
+        server_number = int(sys.argv[2]) 
 
     terminal_handler = Terminal_Handler("terminal")
 
-    tap_listener = Server(port=12458)
+    tap_listener = Server(port=port_number)
     tap_listener.rx_callback = terminal_handler.on_tap
 
     server_manager = ServerManager.get_instance()
@@ -36,7 +47,7 @@ if __name__ == "__main__":
 
     server_manager.run()
 
-    client = Client(port=12456)  #change port when we decide which ports to run each server at
+    client = Client(port=server_number)  #change port when we decide which ports to run each server at
     client.rx_callback = terminal_handler.send_all_transactions
     client.start()
 

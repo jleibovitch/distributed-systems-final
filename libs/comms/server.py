@@ -11,7 +11,7 @@ from time import sleep
 
 class Server:
 
-    buffsize = 1 * 1024 # buffer up to 1kb
+    buffsize = 8 * 1024 # buffer up to 8kb
 
     def __init__(self, ip="0.0.0.0", port=12456):
 

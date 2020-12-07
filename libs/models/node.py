@@ -1,3 +1,10 @@
+"""
+Node.py
+Author: Umar Ehsan
+
+The purpose of this class is to provide a data structure for node identification (server or client)
+"""
+
 from uuid import uuid1
 from json import dumps
 

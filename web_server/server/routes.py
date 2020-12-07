@@ -1,3 +1,10 @@
+"""
+routes.py
+Author: Umar Qureshi
+
+The purpose of this class is to provide routes functionality for the flask web server
+"""
+
 import sys
 
 [sys.path.append(i) for i in ['.', '..']]
@@ -177,7 +184,7 @@ def update_card(card_id):
 
 
         flash('Your funds has been updated', 'success')
-        return redirect(url_for('card', card_id=card.id))
+        return redirect(url_for('user_cards', first_name=card.author.first_name, last_name=card.author.last_name))
 
     return render_template('create_card.html', title='Update Card', form=form, legend='Please enter the amount of funds to add')
 

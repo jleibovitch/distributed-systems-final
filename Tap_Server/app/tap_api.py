@@ -1,3 +1,10 @@
+"""
+tap_api.py
+Author: Umar Ehsan
+
+The purpose of this class is to provide a handler service for message handling (incoming and outgoing)
+"""
+
 import sys
 [sys.path.append(i) for i in ['.', '..']]
 

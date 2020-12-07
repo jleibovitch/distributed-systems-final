@@ -1,3 +1,10 @@
+"""
+models.py
+Author: Umar Qureshi
+
+The purpose of this class is to provide models for database and user accounts and transactions
+"""
+
 from datetime import datetime
 from . import db, login_manager
 from flask_login import UserMixin

@@ -1,3 +1,10 @@
+"""
+forms.py
+Author: Umar Qureshi
+
+The purpose of this class is to provide models for webpage forms and classes to handle transactions and users
+"""
+
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from flask_login import current_user

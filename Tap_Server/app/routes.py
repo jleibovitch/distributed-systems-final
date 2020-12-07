@@ -1,3 +1,10 @@
+"""
+routes.py
+Author: Umar Ehsan
+
+The purpose of this class is to provide routes functionality for flask server (REST API)
+"""
+
 import sys
 [sys.path.append(i) for i in ['.', '..']]
 
@@ -7,9 +14,11 @@ from flask import render_template, flash, redirect, url_for, request
 from app.form import TapForm
 from libs.comms.client import Client
 from random import randint
+from sys import argv
 
 client_handler = None
 client = None
+port_number = 12458 if len(argv) < 3 else int(argv[2])
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
@@ -22,7 +31,7 @@ def index():
         account_no = int(form.account_no.data)
         flash('Tap Successful, Trip charge: {}'.format(route_charge))
         
-        data = client_handler.package_request(account_no, 12458, float(route_charge)) # terminal server port number is used for location number
+        data = client_handler.package_request(account_no, port_number, float(route_charge)) # terminal server port number is used for location number
         send_transaction(data)
 
         flash('Transaction sent to terminal server for caching')
@@ -41,7 +50,7 @@ def shutdown():
 
 def start_client():
     global client_handler, client
-    client = Client(port=12458) # decide on terminal port later
+    client = Client(port=port_number) # decide on terminal port later
     client_handler = Tap_Handler("tap")
     client.start()
 

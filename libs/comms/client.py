@@ -1,10 +1,17 @@
+"""
+Client.py
+Author: Umar Ehsan
+
+The purpose of this class is to provide functionality to a TCP client
+"""
+
 from socket import socket, SHUT_RDWR, AF_INET, SOCK_STREAM
 from threading import Thread
 from queue import Queue
 
 class Client:
 
-    buffsize = 1 * 1024 # buffer up to 1kb
+    buffsize = 8 * 1024 # buffer up to 1kb
 
     def __init__(self, host_addr = "127.0.0.1", port = 0):
         self.socket = socket(AF_INET,SOCK_STREAM)
