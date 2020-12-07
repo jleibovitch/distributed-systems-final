@@ -1,3 +1,10 @@
+"""
+main_handler.py
+Author: Umar Ehsan
+
+The purpose of this class is to provide a handler service for message handling (incoming and outgoing)
+"""
+
 from libs.comms.message import Message
 from libs.models.node import Node
 from libs.models.account import Account

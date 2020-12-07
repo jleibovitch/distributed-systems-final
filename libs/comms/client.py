@@ -1,3 +1,10 @@
+"""
+Client.py
+Author: Umar Ehsan
+
+The purpose of this class is to provide functionality to a TCP client
+"""
+
 from socket import socket, SHUT_RDWR, AF_INET, SOCK_STREAM
 from threading import Thread
 from queue import Queue

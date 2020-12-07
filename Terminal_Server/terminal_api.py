@@ -1,3 +1,10 @@
+"""
+terminal_api.py
+Author: Darren Chan
+
+The purpose of this class is to provide a handler service for message handling (incoming and outgoing)
+"""
+
 from libs.comms.message import Message
 from libs.models.node import Node
 from db import Database

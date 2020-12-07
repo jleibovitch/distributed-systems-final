@@ -1,3 +1,10 @@
+"""
+flaskConfig.py
+Author: Umar Ehsan
+
+The purpose of this class is to provide flask configuration variables
+"""
+
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 

@@ -1,3 +1,10 @@
+"""
+db.py
+Author: Darren Chan
+
+The purpose of this class is to provide local sqlite3 database handling
+"""
+
 from sqlite3 import connect
 from libs.models.transaction import Transaction
 

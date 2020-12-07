@@ -1,3 +1,10 @@
+"""
+main.py
+Author: Darren Chan
+
+Main entry point for the terminal server. Creates the terminal server and main server client and assigns callbacks
+"""
+
 import sys
 [sys.path.append(i) for i in ['.', '..']]
 

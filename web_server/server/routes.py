@@ -1,3 +1,10 @@
+"""
+routes.py
+Author: Umar Qureshi
+
+The purpose of this class is to provide routes functionality for the flask web server
+"""
+
 import sys
 
 [sys.path.append(i) for i in ['.', '..']]
