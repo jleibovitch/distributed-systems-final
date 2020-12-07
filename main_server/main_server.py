@@ -76,7 +76,7 @@ def main():
   def web_fetch():
       while web_listener.running:
           sleep(10)
-          print("Requesting web server transactios")
+          print("Requesting web server transactions")
           for client in web_listener.clients.values():
               client.send(str(Message("main", {}, "pull_transactions")).encode('utf-8'))
 
