@@ -8,4 +8,4 @@
 
 #python3 main.py $port
 
-python3 main.py
+python3 main.py $1 $2
