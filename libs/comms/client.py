@@ -4,7 +4,7 @@ from queue import Queue
 
 class Client:
 
-    buffsize = 1 * 1024 # buffer up to 1kb
+    buffsize = 8 * 1024 # buffer up to 1kb
 
     def __init__(self, host_addr = "127.0.0.1", port = 0):
         self.socket = socket(AF_INET,SOCK_STREAM)
